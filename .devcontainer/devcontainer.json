@@ -1,0 +1,41 @@
+{
+    "name": "java-agent-extension",
+    "build": {
+        "dockerfile": "Dockerfile",
+        "args": {
+            "http_proxy": "${env:DOCKER_PROXY}",
+            "https_proxy": "${env:DOCKER_PROXY}"
+        }
+    },
+    "features": {
+        "ghcr.io/devcontainers/features/java:1": {
+            "version": "none",
+            "installMaven": "false",
+            "installGradle": "true"
+        },
+        "ghcr.io/devcontainers/features/docker-outside-of-docker:1": {}
+    },
+    "customizations": {
+        "vscode": {
+            "extensions": [
+                "streetsidesoftware.code-spell-checker",
+                "vscjava.vscode-java-pack",
+                "vscjava.vscode-gradle",
+                "GitHub.copilot"
+            ]
+        }
+    },
+    "mounts": [
+        "source=${localWorkspaceFolder}/.gradle,target=/home/vscode/.gradle,type=bind,consistency=cached"
+    ],
+    "runArgs": [
+        "--add-host=host.docker.internal:host-gateway",
+        "--name=java-agent-extension",
+        "-v",
+        "/var/run/docker.sock:/var/run/docker.sock"
+    ],
+    "remoteEnv": {
+        "http_proxy": "${env:DOCKER_PROXY}",
+        "https_proxy": "${env:DOCKER_PROXY}"
+    }
+}

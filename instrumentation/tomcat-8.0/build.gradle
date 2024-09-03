@@ -1,0 +1,25 @@
+apply from: "$rootDir/gradle/instrumentation.gradle"
+
+muzzle {
+    pass {
+        group.set("org.apache.tomcat.embed")
+        module.set("tomcat-embed-core")
+        versions.set("[7.0.4, 10)")
+    }
+}
+
+dependencies {
+    implementation project(':instrumentation:common')
+    implementation project(':instrumentation:tomcat-common')
+
+    compileOnly 'org.apache.tomcat.embed:tomcat-embed-core:8.0.1'
+
+    // Make sure nothing breaks due to both 7.0 and 10.0 modules being present together
+    testInstrumentation project(":instrumentation:tomcat-10.0")
+    // testing whether instrumentation still works when jakarta servlet api is also present
+    testInstrumentation "jakarta.servlet:jakarta.servlet-api:5.0.0"
+
+    testImplementation 'org.apache.tomcat.embed:tomcat-embed-core:8.0.1'
+    testRuntimeOnly 'org.apache.tomcat.embed:tomcat-embed-logging-juli:8.0.1'
+    testInstrumentation "io.opentelemetry.javaagent.instrumentation:opentelemetry-javaagent-tomcat-7.0:${versions.opentelemetryJavaagentAlpha}"
+}

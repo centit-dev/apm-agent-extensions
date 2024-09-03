@@ -1,0 +1,35 @@
+apply from: "$rootDir/gradle/instrumentation.gradle"
+
+dependencies {
+    implementation project(':instrumentation:common')
+
+    testImplementation 'org.apache.tomcat.embed:tomcat-embed-core:10.0.0'
+    testInstrumentation "io.opentelemetry.javaagent.instrumentation:opentelemetry-javaagent-tomcat-10.0:${versions.opentelemetryJavaagentAlpha}"
+}
+
+tasks.withType(Test).configureEach {
+    useJUnitPlatform()
+
+    inputs.file(shadowJar.archiveFile)
+
+    environment("OTEL_PROPAGATORS_KEYS", "key1,key2")
+    jvmArgs "-Dotel.javaagent.debug=true"
+    jvmArgs "-javaagent:${configurations.testAgent.files.first().absolutePath}"
+    jvmArgs "-Dotel.javaagent.experimental.initializer.jar=${shadowJar.archiveFile.get().asFile.absolutePath}"
+    jvmArgs "-Dotel.javaagent.testing.additional-library-ignores.enabled=false"
+    jvmArgs "-Dotel.javaagent.testing.fail-on-context-leak=true"
+    // prevent sporadic gradle deadlocks, see SafeLogger for more details
+    jvmArgs "-Dotel.javaagent.testing.transform-safe-logging.enabled=true"
+
+    dependsOn shadowJar
+    dependsOn configurations.testAgent.buildDependencies
+
+    // The sources are packaged into the testing jar so we need to make sure to exclude from the test
+    // classpath, which automatically inherits them, to ensure our shaded versions are used.
+    classpath = classpath.filter {
+        if (it == file(layout.buildDirectory.dir("resources/main")) || it == file(layout.buildDirectory.dir("classes/java/main"))) {
+            return false
+        }
+        return true
+    }
+}

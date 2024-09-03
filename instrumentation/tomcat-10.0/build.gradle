@@ -1,0 +1,24 @@
+apply from: "$rootDir/gradle/instrumentation.gradle"
+
+muzzle {
+    pass {
+        group.set("org.apache.tomcat.embed")
+        module.set("tomcat-embed-core")
+        versions.set("[10,)")
+    }
+}
+
+dependencies {
+    implementation project(':instrumentation:common')
+    implementation project(':instrumentation:tomcat-common')
+
+    compileOnly 'org.apache.tomcat.embed:tomcat-embed-core:10.0.0'
+
+    // Make sure nothing breaks due to both 8.0 and 10.0 modules being present together
+    testInstrumentation project(":instrumentation:tomcat-8.0")
+    // testing whether instrumentation still works when javax servlet api is also present
+    testInstrumentation "javax.servlet:javax.servlet-api:3.0.1"
+
+    testImplementation 'org.apache.tomcat.embed:tomcat-embed-core:10.0.0'
+    testInstrumentation "io.opentelemetry.javaagent.instrumentation:opentelemetry-javaagent-tomcat-10.0:${versions.opentelemetryJavaagentAlpha}"
+}

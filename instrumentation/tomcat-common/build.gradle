@@ -1,0 +1,11 @@
+dependencies {
+    implementation project(':instrumentation:common')
+
+    compileOnly 'io.opentelemetry:opentelemetry-sdk'
+    compileOnly 'io.opentelemetry:opentelemetry-sdk-extension-autoconfigure-spi'
+    compileOnly 'io.opentelemetry.instrumentation:opentelemetry-instrumentation-api'
+    compileOnly 'io.opentelemetry.instrumentation:opentelemetry-instrumentation-api-incubator'
+    compileOnly 'io.opentelemetry.javaagent:opentelemetry-javaagent-extension-api'
+
+    compileOnly 'org.apache.tomcat.embed:tomcat-embed-core:8.0.1'
+}

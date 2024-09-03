@@ -1,0 +1,9 @@
+dependencies {
+    implementation 'com.fasterxml.jackson.core:jackson-databind'
+
+    compileOnly 'io.opentelemetry:opentelemetry-sdk'
+    compileOnly 'io.opentelemetry:opentelemetry-sdk-extension-autoconfigure-spi'
+    compileOnly 'io.opentelemetry.instrumentation:opentelemetry-instrumentation-api'
+    compileOnly 'io.opentelemetry.instrumentation:opentelemetry-instrumentation-api-incubator'
+    compileOnly 'io.opentelemetry.javaagent:opentelemetry-javaagent-extension-api'
+}

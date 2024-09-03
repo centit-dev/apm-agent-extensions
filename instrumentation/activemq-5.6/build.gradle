@@ -1,0 +1,18 @@
+apply from: "$rootDir/gradle/instrumentation.gradle"
+
+dependencies {
+    compileOnly("org.apache.activemq:activemq-client:5.16.5")
+
+    testImplementation("org.apache.activemq:activemq-client:5.16.5")
+    testInstrumentation("io.opentelemetry.javaagent.instrumentation:opentelemetry-javaagent-jms-1.1:${versions.opentelemetryJavaagentAlpha}")
+    testInstrumentation("javax.transaction:jta:1.1")
+}
+
+muzzle {
+    pass {
+        group.set("org.apache.activemq")
+        module.set("activemq-client")
+        versions.set("[5.16.5,)")
+        assertInverse.set(true)
+    }
+}
